@@ -7,3 +7,27 @@ Spora is presently among the most common ransomware families. For instance, it s
 
 This is a proof of concept demonstrating how to vaccinate against Spora.
 For more information, visit the following blog post: http://www.minerva-labs.com/post/vaccinating-against-spora-ransomware-a-proof-of-concept-tool-by-minerva
+
+## The code
+
+The actual vaccination code can be found in the `VaccinateSpora()` method in `Program.cs`:
+
+```
+private bool VaccinateSpora()
+{
+    uint volumeSerialNumber, maxComponentLength;
+    WinApi.FileSystemFeature fileSystemFlags;
+    if (!WinApi.GetVolumeInformation(@"C:\", null, 0, out volumeSerialNumber, out maxComponentLength, out fileSystemFlags, null, 0))
+    {
+        return false;
+    }
+
+    string mutexName = "m" + volumeSerialNumber;
+    if (WinApi.CreateMutex(IntPtr.Zero, false, mutexName) == IntPtr.Zero)
+    {
+        return false;
+    }
+
+    return true;
+}
+```
